@@ -65,13 +65,21 @@ def register_routes(app):
         if "user_id" not in session:
             return redirect("/login")
 
-        cart_item = Cart(
+        cart_item = Cart.query.filter_by(
             user_id=session["user_id"],
             product_id=product_id,
-            quantity=1,
-        )
+        ).first()
 
-        db.session.add(cart_item)
+        if cart_item:
+            cart_item.quantity += 1
+        else:
+            cart_item = Cart(
+                user_id=session["user_id"],
+                product_id=product_id,
+                quantity=1,
+            )
+            db.session.add(cart_item)
+
         db.session.commit()
 
         return redirect("/cart")
@@ -83,7 +91,13 @@ def register_routes(app):
 
         cart_items = Cart.query.filter_by(user_id=session["user_id"]).all()
 
-        return render_template("cart.html", cart_items=cart_items)
+        total = sum(item.product.price * item.quantity for item in cart_items)
+
+        return render_template(
+            "cart.html",
+            cart_items=cart_items,
+            total=total,
+        )
 
     @app.route("/checkout")
     def checkout():

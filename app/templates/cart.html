@@ -14,9 +14,14 @@
 {% for item in cart_items %}
 
     <li>
-        Product ID: {{ item.product_id }}
-        |
-        Quantity: {{ item.quantity }}
+       <h2>{{ item.product.name }}</h2>
+
+       <p>₹{{ item.product.price }}</p>
+
+       <p>Quantity: {{ item.quantity }}</p>
+
+       <p><strong>Subtotal:</strong> ₹{{ item.product.price * item.quantity }}</p>
+
     </li>
 
 {% endfor %}
@@ -28,6 +33,10 @@
 <p>Your cart is empty.</p>
 
 {% endif %}
+
+<hr>
+
+<h2>Total: ₹{{ total }}</h2>
 
 </body>
 </html>
