@@ -98,6 +98,24 @@ def register_routes(app):
             cart_items=cart_items,
             total=total,
         )
+    
+    @app.route("/remove-from-cart/<int:cart_id>", methods=["POST"])
+    def remove_from_cart(cart_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        cart_item = Cart.query.get_or_404(cart_id)
+
+        if cart_item.user_id != session["user_id"]:
+            return redirect("/cart")
+
+        if cart_item.quantity > 1:
+           cart_item.quantity -= 1
+        else:
+          db.session.delete(cart_item)
+
+        db.session.commit()  
+        return redirect("/cart")
 
     @app.route("/checkout")
     def checkout():

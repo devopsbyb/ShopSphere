@@ -22,6 +22,14 @@
 
        <p><strong>Subtotal:</strong> ₹{{ item.product.price * item.quantity }}</p>
 
+       <form action="/remove-from-cart/{{ item.id }}" method="POST">
+
+          <button type="submit">
+        🗑 Remove
+          </button>
+
+    </form> 
+
     </li>
 
 {% endfor %}
