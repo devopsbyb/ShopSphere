@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Address</title>
+</head>
+
+<body>
+
+<h1>Add Delivery Address</h1>
+
+<form action="/add-address" method="POST">
+
+    <label>Full Name</label><br>
+    <input type="text" name="full_name" required><br><br>
+
+    <label>Phone Number</label><br>
+    <input type="text" name="phone_number" required><br><br>
+
+    <label>Address Line 1</label><br>
+    <input type="text" name="line1" required><br><br>
+
+    <label>Address Line 2</label><br>
+    <input type="text" name="line2" required><br><br>
+
+    <label>Address Line 3 (Optional)</label><br>
+    <input type="text" name="line3"><br><br>
+
+    <label>City</label><br>
+    <input type="text" name="city" required><br><br>
+
+    <label>State</label><br>
+    <input type="text" name="state" required><br><br>
+
+    <label>Pincode</label><br>
+    <input type="text" name="pincode" required><br><br>
+
+    <label>
+        <input type="checkbox" name="is_default">
+        Set as Default Address
+    </label>
+
+    <br><br>
+
+    <button type="submit">
+        Save Address
+    </button>
+
+</form>
+
+</body>
+</html>

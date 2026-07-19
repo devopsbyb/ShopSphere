@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Addresses</title>
+</head>
+<body>
+
+<h2>My Addresses</h2>
+
+<a href="/add-address">+ Add New Address</a>
+
+<hr>
+
+{% for address in addresses %}
+
+<div style="border:1px solid #ccc; padding:15px; margin-bottom:15px;">
+
+    <h3>
+        {{ address.full_name }}
+
+        {% if address.is_default %}
+            ⭐ Default
+        {% endif %}
+    </h3>
+
+    <p>{{ address.phone_number }}</p>
+
+    <p>
+        {{ address.line1 }}<br>
+        {{ address.line2 }}<br>
+
+        {% if address.line3 %}
+            {{ address.line3 }}<br>
+        {% endif %}
+
+        {{ address.city }}, {{ address.state }} - {{ address.pincode }}
+    </p>
+
+</div>
+
+{% else %}
+
+<p>No addresses found.</p>
+
+{% endfor %}
+
+</body>
+</html>

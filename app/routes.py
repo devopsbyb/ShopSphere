@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, session   
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Product, Cart 
+from models import db, User, Product, Cart,Address 
 
 
 def register_routes(app):
@@ -91,11 +91,13 @@ def register_routes(app):
 
         cart_items = Cart.query.filter_by(user_id=session["user_id"]).all()
 
-        total = sum(item.product.price * item.quantity for item in cart_items)
+        valid_cart_items = [item for item in cart_items if item.product]
+
+        total = sum(item.product.price * item.quantity for item in valid_cart_items)
 
         return render_template(
             "cart.html",
-            cart_items=cart_items,
+            cart_items=valid_cart_items,
             total=total,
         )
     
@@ -124,3 +126,52 @@ def register_routes(app):
     @app.route("/order-success")
     def order_success():
         return render_template("order_success.html")
+
+    @app.route("/add-address", methods=["GET", "POST"])
+    def add_address():
+        if "user_id" not in session:
+            return redirect("/login")
+
+        if request.method == "POST":
+            full_name = request.form["full_name"]
+            phone_number = request.form["phone_number"]
+            line1 = request.form["line1"]
+            line2 = request.form["line2"]
+            line3 = request.form["line3"]
+            city = request.form["city"]
+            state = request.form["state"]
+            pincode = request.form["pincode"]
+
+            is_default = "is_default" in request.form
+
+            if is_default:
+                Address.query.filter_by(user_id=session["user_id"]).update({"is_default": False})
+
+            new_address = Address(
+                user_id=session["user_id"],
+                full_name=full_name,
+                phone_number=phone_number,
+                line1=line1,
+                line2=line2,
+                line3=line3,
+                city=city,
+                state=state,
+                pincode=pincode,
+                is_default=is_default,
+            )
+
+            db.session.add(new_address)
+            db.session.commit()
+
+            return redirect("/addresses")
+
+        return render_template("add_address.html")
+    
+    @app.route("/addresses")
+    def addresses():
+        if "user_id" not in session:
+            return redirect("/login")
+
+        addresses = Address.query.filter_by(user_id=session["user_id"]).all()
+
+        return render_template("addresses.html", addresses=addresses)
