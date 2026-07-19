@@ -1,42 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask
+from config import Config
+from models import db
+from routes import register_routes
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
+db.init_app(app)
 
-@app.route("/")
-def home():
-    return render_template("home.html")
-
-
-@app.route("/register")
-def register():
-    return render_template("register.html")
-
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-
-@app.route("/products")
-def products():
-    return render_template("products.html")
-
-
-@app.route("/cart")
-def cart():
-    return render_template("cart.html")
-
-
-@app.route("/checkout")
-def checkout():
-    return render_template("checkout.html")
-
-
-@app.route("/order-success")
-def order_success():
-    return render_template("order_success.html")
-
+register_routes(app)
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+
     app.run(debug=True)
