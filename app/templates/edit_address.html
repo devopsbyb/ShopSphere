@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Address</title>
+</head>
+
+<body>
+
+<h1>Edit Delivery Address</h1>
+
+<form action="/edit-address/{{ address.id }}" method="POST">
+
+    <label>Full Name</label><br>
+    <input
+        type="text"
+        name="full_name"
+        value="{{ address.full_name }}"
+        required><br><br>
+
+    <label>Phone Number</label><br>
+    <input
+        type="text"
+        name="phone_number"
+        value="{{ address.phone_number }}"
+        required><br><br>
+
+    <label>Address Line 1</label><br>
+    <input
+        type="text"
+        name="line1"
+        value="{{ address.line1 }}"
+        required><br><br>
+
+    <label>Address Line 2</label><br>
+    <input
+        type="text"
+        name="line2"
+        value="{{ address.line2 }}"
+        required><br><br>
+
+    <label>Address Line 3 (Optional)</label><br>
+    <input
+        type="text"
+        name="line3"
+        value="{{ address.line3 }}"><br><br>
+
+    <label>City</label><br>
+    <input
+        type="text"
+        name="city"
+        value="{{ address.city }}"
+        required><br><br>
+
+    <label>State</label><br>
+    <input
+        type="text"
+        name="state"
+        value="{{ address.state }}"
+        required><br><br>
+
+    <label>Pincode</label><br>
+    <input
+        type="text"
+        name="pincode"
+        value="{{ address.pincode }}"
+        required><br><br>
+
+    <label>
+        <input
+            type="checkbox"
+            name="is_default"
+            {% if address.is_default %}checked{% endif %}>
+        Set as Default Address
+    </label>
+
+    <br><br>
+
+    <button type="submit">
+        Update Address
+    </button>
+
+</form>
+
+</body>
+</html>

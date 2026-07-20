@@ -1,6 +1,7 @@
-from flask import render_template, request, redirect, session   
-from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Product, Cart,Address 
+from flask import redirect, render_template, request, session
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from models import Address, Cart, Product, User, Order, OrderItem, db
 
 
 def register_routes(app):
@@ -90,9 +91,7 @@ def register_routes(app):
             return redirect("/login")
 
         cart_items = Cart.query.filter_by(user_id=session["user_id"]).all()
-
         valid_cart_items = [item for item in cart_items if item.product]
-
         total = sum(item.product.price * item.quantity for item in valid_cart_items)
 
         return render_template(
@@ -100,7 +99,7 @@ def register_routes(app):
             cart_items=valid_cart_items,
             total=total,
         )
-    
+
     @app.route("/remove-from-cart/<int:cart_id>", methods=["POST"])
     def remove_from_cart(cart_id):
         if "user_id" not in session:
@@ -112,11 +111,11 @@ def register_routes(app):
             return redirect("/cart")
 
         if cart_item.quantity > 1:
-           cart_item.quantity -= 1
+            cart_item.quantity -= 1
         else:
-          db.session.delete(cart_item)
+            db.session.delete(cart_item)
 
-        db.session.commit()  
+        db.session.commit()
         return redirect("/cart")
 
     @app.route("/checkout")
@@ -166,7 +165,7 @@ def register_routes(app):
             return redirect("/addresses")
 
         return render_template("add_address.html")
-    
+
     @app.route("/addresses")
     def addresses():
         if "user_id" not in session:
@@ -175,3 +174,170 @@ def register_routes(app):
         addresses = Address.query.filter_by(user_id=session["user_id"]).all()
 
         return render_template("addresses.html", addresses=addresses)
+
+    @app.route("/delete-address/<int:address_id>", methods=["POST"])
+    def delete_address(address_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        address = Address.query.get_or_404(address_id)
+
+        if address.user_id != session["user_id"]:
+            return redirect("/addresses")
+
+        db.session.delete(address)
+        db.session.commit()
+
+        return redirect("/addresses")
+    
+    @app.route("/edit-address/<int:address_id>", methods=["GET", "POST"])
+    def edit_address(address_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        address = Address.query.get_or_404(address_id)
+
+        if address.user_id != session["user_id"]:
+            return redirect("/addresses")
+
+        if request.method == "POST":
+            address.full_name = request.form["full_name"]
+            address.phone_number = request.form["phone_number"]
+            address.line1 = request.form["line1"]
+            address.line2 = request.form["line2"]
+            address.line3 = request.form["line3"]
+            address.city = request.form["city"]
+            address.state = request.form["state"]
+            address.pincode = request.form["pincode"]
+
+            if "is_default" in request.form:
+                Address.query.filter_by(user_id=session["user_id"]).update({"is_default": False})
+                address.is_default = True
+            else:
+                address.is_default = False
+
+            db.session.commit()
+            return redirect("/addresses")
+
+        return render_template("edit_address.html", address=address)
+    
+    @app.route("/select-address/<int:address_id>", methods=["POST"])
+    def select_address(address_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        address = Address.query.get_or_404(address_id)
+
+        if address.user_id != session["user_id"]:
+            return redirect("/addresses")
+
+        session["selected_address_id"] = address.id
+
+        return redirect("/order-review")
+
+    @app.route("/order-review")
+    def order_review():
+        if "user_id" not in session:
+            return redirect("/login")
+
+        if "selected_address_id" not in session:
+            return redirect("/addresses")
+
+        address = Address.query.get_or_404(session["selected_address_id"])
+        cart_items = Cart.query.filter_by(user_id=session["user_id"]).all()
+
+        total = 0
+        for item in cart_items:
+            total += item.product.price * item.quantity
+
+        return render_template(
+            "order_review.html",
+            address=address,
+            cart_items=cart_items,
+            total=total,
+        )
+    
+    @app.route("/place-order", methods=["POST"])
+    def place_order():
+        if "user_id" not in session:
+            return redirect("/login")
+
+        if "selected_address_id" not in session:
+            return redirect("/addresses")
+
+        cart_items = Cart.query.filter_by(user_id=session["user_id"]).all()
+
+        if not cart_items:
+            return redirect("/cart")
+
+        total = 0
+        for item in cart_items:
+            total += item.product.price * item.quantity
+
+        order = Order(
+            user_id=session["user_id"],
+            address_id=session["selected_address_id"],
+            total_amount=total,
+        )
+
+        db.session.add(order)
+        db.session.commit()
+
+        for item in cart_items:
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=item.product_id,
+                quantity=item.quantity,
+                price=item.product.price,
+            )
+            db.session.add(order_item)
+
+        db.session.commit()
+
+        return redirect(f"/payment/{order.id}")
+    
+
+    @app.route("/payment/<int:order_id>")
+    def payment(order_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        order = Order.query.get_or_404(order_id)
+
+        if order.user_id != session["user_id"]:
+            return redirect("/products")
+
+        return render_template("payment.html", order=order)
+    
+    @app.route("/payment-success/<int:order_id>", methods=["POST"])
+    def payment_success(order_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        order = Order.query.get_or_404(order_id)
+
+        if order.user_id != session["user_id"]:
+            return redirect("/products")
+        order.payment_status = "Paid"
+
+        db.session.commit()
+
+        Cart.query.filter_by(
+            user_id=session["user_id"]
+        ).delete()
+
+        db.session.commit()
+
+        return render_template(
+            "order_success.html",
+             order=order
+        ) 
+
+    @app.route("/my-orders")
+    def my_orders():
+        if "user_id" not in session:
+            return redirect("/login")
+
+        orders = Order.query.filter_by(user_id=session["user_id"]).order_by(Order.created_at.desc()).all()
+
+        return render_template("my_orders.html", orders=orders)

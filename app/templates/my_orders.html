@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Orders</title>
+</head>
+
+<body>
+
+    <h1>My Orders</h1>
+
+    <hr>
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+            <h3>Order #{{ order.id }}</h3>
+
+            <p>
+                Date: {{ order.created_at.strftime("%d-%m-%Y %I:%M %p") }}
+            </p>
+
+            <p>
+                Total: ₹{{ order.total_amount }}
+            </p>
+
+            <p>
+                Payment Status: {{ order.payment_status }}
+            </p>
+
+            <p>
+                Order Status: {{ order.order_status }}
+            </p>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <h3>No orders found.</h3>
+
+    {% endif %}
+
+</body>
+
+</html>

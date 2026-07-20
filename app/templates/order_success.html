@@ -1,2 +1,38 @@
-<h1>Order Placed Successfully!</h1>
-<p>Thank you for shopping with ShopSphere.</p>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Order Successful</title>
+</head>
+
+<body>
+
+    <h1>🎉 Order Placed Successfully!</h1>
+
+    <h2>Thank you for shopping with ShopSphere.</h2>
+
+    <hr>
+
+    <p>
+        <strong>Order ID:</strong> {{ order.id }}
+    </p>
+
+    <p>
+        <strong>Payment Status:</strong>
+        {{ order.payment_status }}
+    </p>
+
+    <p>
+        <strong>Total Paid:</strong>
+        ₹{{ order.total_amount }}
+    </p>
+
+    <br>
+
+    <a href="/products">
+        <button>Continue Shopping</button>
+    </a>
+
+</body>
+
+</html>

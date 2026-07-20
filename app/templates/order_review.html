@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Order Review</title>
+</head>
+
+<body>
+
+<h1>Order Review</h1>
+
+<h2>Delivery Address</h2>
+
+<p>
+    {{ address.full_name }}<br>
+    {{ address.phone_number }}<br><br>
+
+    {{ address.line1 }}<br>
+    {{ address.line2 }}<br>
+
+    {% if address.line3 %}
+        {{ address.line3 }}<br>
+    {% endif %}
+
+    {{ address.city }},
+    {{ address.state }} -
+    {{ address.pincode }}
+</p>
+
+<h2>Products</h2>
+
+<hr>
+
+{% for item in cart_items %}
+
+<p>
+    <strong>{{ item.product.name }}</strong><br>
+
+    Price: ₹{{ item.product.price }}<br>
+
+    Quantity: {{ item.quantity }}<br>
+
+    Total:
+    ₹{{ item.product.price * item.quantity }}
+</p>
+
+<h2>Grand Total</h2>
+
+<h3>₹{{ total }}</h3>
+
+<hr>
+
+<hr>
+
+<form action="/place-order" method="POST">
+    <button type="submit">
+        Proceed to Payment
+    </button>
+</form>
+
+{% endfor %}
+
+</body>
+
+</html>

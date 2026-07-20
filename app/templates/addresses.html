@@ -34,7 +34,26 @@
         {% endif %}
 
         {{ address.city }}, {{ address.state }} - {{ address.pincode }}
-    </p>
+</p>
+        
+<form action="/delete-address/{{ address.id }}" method="POST">
+    <button type="submit">Delete</button>
+</form>    
+
+<form action="/select-address/{{ address.id }}" method="POST">
+    <button type="submit">
+        Deliver Here
+    </button>
+</form>
+
+<a href="/edit-address/{{ address.id }}">
+    <button type="button">Edit</button>
+</a>
+
+<form action="/delete-address/{{ address.id }}" method="POST">
+    <button type="submit">Delete</button>
+</form>
+
 
 </div>
 
