@@ -1,26 +1,47 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Payment</title>
-</head>
+{% block title %}
+Payment
+{% endblock %}
 
-<body>
+{% block content %}
 
-    <h1>Payment Page</h1>
+<div class="row justify-content-center">
 
-    <h2>Order ID: {{ order.id }}</h2>
+    <div class="col-md-6">
 
-    <h3>Total Amount: ₹{{ order.total_amount }}</h3>
+        <div class="card shadow">
 
-    <br>
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Payment</h3>
+            </div>
 
-<form action="/payment-success/{{ order.id }}" method="POST">
-    <button type="submit">
-        Pay Now
-    </button>
-</form>
+            <div class="card-body">
 
-</body>
+                <h5>Order ID: {{ order.id }}</h5>
 
-</html>
+                <hr>
+
+                <h4 class="text-success">
+                    Total Amount: ₹{{ order.total_amount }}
+                </h4>
+
+                <br>
+
+                <form action="/payment-success/{{ order.id }}" method="POST">
+
+                    <button type="submit" class="btn btn-success w-100">
+                        Pay Now
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

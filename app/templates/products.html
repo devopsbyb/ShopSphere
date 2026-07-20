@@ -1,39 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ShopSphere Products</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% block title %}
+Products
+{% endblock %}
 
-<h1>ShopSphere Products</h1>
+{% block content %}
 
-<div class="products">
+<h1 class="mb-4 text-center">🛍️ ShopSphere Products</h1>
 
-{% for product in products %}
+<div class="row">
 
-<div class="card">
+    {% for product in products %}
 
-    <h2>{{ product.name }}</h2>
+    <div class="col-lg-4 col-md-6 mb-4">
 
-    <p>{{ product.description }}</p>
+        <div class="card h-100 shadow-sm">
 
-    <p class="price">₹{{ product.price }}</p>
+            <img src="{{ product.image }}"
+                 class="card-img-top"
+                 alt="{{ product.name }}"
+                 style="height:250px; object-fit:cover;">
 
-    <p class="stock">Stock: {{ product.stock }}</p>
+            <div class="card-body d-flex flex-column">
 
-    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                <h4 class="card-title">
+                    {{ product.name }}
+                </h4>
 
-    <button type="submit">Add to Cart</button>
+                <p class="card-text text-muted">
+                    {{ product.description }}
+                </p>
 
-</form>
+                <h5 class="text-success mt-auto">
+                    ₹{{ product.price }}
+                </h5>
+
+                <span class="badge bg-secondary mb-3">
+                    Stock: {{ product.stock }}
+                </span>
+
+                <form action="{{ url_for('add_to_cart', product_id=product.id) }}"
+                      method="POST">
+
+                    <button type="submit"
+                            class="btn btn-primary w-100">
+                        🛒 Add to Cart
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
 
 </div>
 
-{% endfor %}
-
-</div>
-
-</body>
-</html>
+{% endblock %}

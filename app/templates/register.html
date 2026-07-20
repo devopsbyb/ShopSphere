@@ -1,38 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}
+Register
+{% endblock %}
 
-<h1>User Registration</h1>
+{% block content %}
 
-<form action="/register" method="POST">
+<div class="row justify-content-center">
 
-    <label>Username:</label>
-    <input type="text" name="username" required>
+    <div class="col-md-6">
 
-    <br><br>
+        <div class="card shadow">
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
+            <div class="card-header bg-success text-white text-center">
+                <h3 class="mb-0">Create Your Account</h3>
+            </div>
 
-    <br><br>
+            <div class="card-body">
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
+                <form action="/register" method="POST">
 
-    <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-control"
+                            placeholder="Enter your username"
+                            required>
+                    </div>
 
-    <label>Confirm Password:</label>
-    <input type="password" name="confirm_password" required>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                            required>
+                    </div>
 
-    <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            required>
+                    </div>
 
-    <button type="submit">Register</button>
+                    <div class="mb-4">
+                        <label class="form-label">Confirm Password</label>
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            class="form-control"
+                            placeholder="Confirm your password"
+                            required>
+                    </div>
 
-</form>
+                    <button
+                        type="submit"
+                        class="btn btn-success w-100">
+                        Register
+                    </button>
 
-</body>
-</html>
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-0">
+                    Already have an account?
+                    <a href="/login">Login Here</a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

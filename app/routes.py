@@ -118,6 +118,41 @@ def register_routes(app):
         db.session.commit()
         return redirect("/cart")
 
+    @app.route("/increase-quantity/<int:cart_id>", methods=["POST"])
+    def increase_quantity(cart_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        cart_item = Cart.query.get_or_404(cart_id)
+
+        if cart_item.user_id != session["user_id"]:
+            return redirect("/cart")
+
+        cart_item.quantity += 1
+        db.session.commit()
+
+        return redirect("/cart")
+    
+    @app.route("/decrease-quantity/<int:cart_id>", methods=["POST"])
+    def decrease_quantity(cart_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        cart_item = Cart.query.get_or_404(cart_id)
+
+        if cart_item.user_id != session["user_id"]:
+            return redirect("/cart")
+
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+        else:
+            db.session.delete(cart_item)
+
+        db.session.commit()
+
+        return redirect("/cart")
+
+
     @app.route("/checkout")
     def checkout():
         return render_template("checkout.html")

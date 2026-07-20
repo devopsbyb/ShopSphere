@@ -1,58 +1,159 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Shopping Cart</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Shopping Cart</h1>
+{% block title %}
+Shopping Cart
+{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4 text-center">🛒 Shopping Cart</h1>
 
 {% if cart_items %}
 
-<ul>
+<div class="card shadow">
 
-{% for item in cart_items %}
+    <div class="card-body">
 
-    <li>
-       <h2>{{ item.product.name }}</h2>
+        <table class="table table-hover align-middle">
 
-       <p>₹{{ item.product.price }}</p>
+            <thead class="table-dark">
 
-       <p>Quantity: {{ item.quantity }}</p>
+                <tr>
 
-       <p><strong>Subtotal:</strong> ₹{{ item.product.price * item.quantity }}</p>
+                    <th>Product</th>
 
-       <form action="/remove-from-cart/{{ item.id }}" method="POST">
+                    <th>Price</th>
 
-          <button type="submit">
-        🗑 Remove
-          </button>
+                    <th>Quantity</th>
 
-    </form> 
+                    <th>Subtotal</th>
 
-    </li>
+                    <th>Action</th>
 
-{% endfor %}
+                </tr>
 
-</ul>
+            </thead>
+
+            <tbody>
+
+            {% for item in cart_items %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ item.product.name }}</strong><br>
+                        <small class="text-muted">
+                            {{ item.product.description }}
+                        </small>
+                    </td>
+
+                    <td>
+                        ₹{{ item.product.price }}
+                    </td>
+
+                    <td>
+
+                        <div class="d-flex align-items-center">
+
+                            <form action="/decrease-quantity/{{ item.id }}"
+                                  method="POST">
+
+                                <button
+                                    class="btn btn-outline-secondary btn-sm">
+                                    -
+                                </button>
+
+                            </form>
+
+                            <span class="mx-3 fw-bold">
+                                {{ item.quantity }}
+                            </span>
+
+                            <form action="/increase-quantity/{{ item.id }}"
+                                  method="POST">
+
+                                <button
+                                    class="btn btn-outline-secondary btn-sm">
+                                    +
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+
+                        ₹{{ item.product.price * item.quantity }}
+
+                    </td>
+
+                    <td>
+
+                        <form action="/remove-from-cart/{{ item.id }}"
+                              method="POST">
+
+                            <button
+                                class="btn btn-danger btn-sm">
+
+                                🗑 Remove
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="mt-4 text-end">
+
+    <h3>
+        Total: <span class="text-success">₹{{ total }}</span>
+    </h3>
+
+    <a href="/products"
+       class="btn btn-secondary">
+
+        Continue Shopping
+
+    </a>
+
+    <a href="/checkout"
+       class="btn btn-success">
+
+        Proceed to Checkout
+
+    </a>
+
+</div>
 
 {% else %}
 
-<p>Your cart is empty.</p>
+<div class="alert alert-info text-center">
+
+    <h4>Your cart is empty.</h4>
+
+    <a href="/products"
+       class="btn btn-primary mt-3">
+
+        Continue Shopping
+
+    </a>
+
+</div>
 
 {% endif %}
 
-<hr>
-
-<hr>
-
-<h2>Total : ₹{{ total }}</h2>
-
-<a href="/checkout">
-    <button>
-        Checkout
-    </button>
-</a>
-
-</body>
-</html>
+{% endblock %}

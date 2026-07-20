@@ -1,23 +1,83 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login - ShopSphere</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>Login</h1>
+{% block title %}
+Login
+{% endblock %}
 
-    <form method="POST">
+{% block content %}
 
-        <label>Email</label><br>
-        <input type="email" name="email" required><br><br>
+<div class="row justify-content-center">
 
-        <label>Password</label><br>
-        <input type="password" name="password" required><br><br>
+    <div class="col-md-5">
 
-        <button type="submit">Login</button>
+        <div class="card shadow">
 
-    </form>
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="mb-0">Login</h3>
+            </div>
 
-</body>
-</html>
+            <div class="card-body">
+
+                <form method="POST">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                            required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            required>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100">
+
+                        Login
+
+                    </button>
+
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-0">
+
+                    Don't have an account?
+
+                    <a href="/register">
+                        Register Here
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
