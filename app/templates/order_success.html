@@ -1,38 +1,87 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Order Successful</title>
-</head>
+{% block title %}
+Order Successful - ShopSphere
+{% endblock %}
 
-<body>
+{% block content %}
 
-    <h1>🎉 Order Placed Successfully!</h1>
+<div class="container mt-5">
 
-    <h2>Thank you for shopping with ShopSphere.</h2>
+    <div class="row justify-content-center">
 
-    <hr>
+        <div class="col-md-8">
 
-    <p>
-        <strong>Order ID:</strong> {{ order.id }}
-    </p>
+            <div class="card shadow text-center">
 
-    <p>
-        <strong>Payment Status:</strong>
-        {{ order.payment_status }}
-    </p>
+                <div class="card-body p-5">
 
-    <p>
-        <strong>Total Paid:</strong>
-        ₹{{ order.total_amount }}
-    </p>
+                    <h1 class="text-success mb-3">
+                        🎉 Order Placed Successfully!
+                    </h1>
 
-    <br>
+                    <p class="lead">
+                        Thank you for shopping with <strong>ShopSphere</strong>.
+                    </p>
 
-    <a href="/products">
-        <button>Continue Shopping</button>
-    </a>
+                    <hr class="my-4">
 
-</body>
+                    <div class="row text-start">
 
-</html>
+                        <div class="col-md-4">
+                            <strong>Order ID</strong>
+                        </div>
+
+                        <div class="col-md-8">
+                            {{ order.id }}
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-3 text-start">
+
+                        <div class="col-md-4">
+                            <strong>Payment Status</strong>
+                        </div>
+
+                        <div class="col-md-8">
+                            <span class="badge bg-success">
+                                {{ order.payment_status }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-3 text-start">
+
+                        <div class="col-md-4">
+                            <strong>Total Paid</strong>
+                        </div>
+
+                        <div class="col-md-8">
+                            <strong class="text-success">
+                                ₹{{ order.total_amount }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-5">
+
+                        <a href="/products" class="btn btn-primary">
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

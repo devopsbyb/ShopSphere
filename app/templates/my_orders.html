@@ -1,48 +1,86 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>My Orders</title>
-</head>
+{% block title %}
+My Orders - ShopSphere
+{% endblock %}
 
-<body>
+{% block content %}
 
-    <h1>My Orders</h1>
+<div class="container mt-5">
 
-    <hr>
+    <h2 class="mb-4">My Orders</h2>
 
     {% if orders %}
 
         {% for order in orders %}
 
-            <h3>Order #{{ order.id }}</h3>
+        <div class="card shadow-sm mb-4">
 
-            <p>
-                Date: {{ order.created_at.strftime("%d-%m-%Y %I:%M %p") }}
-            </p>
+            <div class="card-body">
 
-            <p>
-                Total: ₹{{ order.total_amount }}
-            </p>
+                <div class="row">
 
-            <p>
-                Payment Status: {{ order.payment_status }}
-            </p>
+                    <div class="col-md-3">
+                        <strong>Order ID</strong><br>
+                        #{{ order.id }}
+                    </div>
 
-            <p>
-                Order Status: {{ order.order_status }}
-            </p>
+                    <div class="col-md-3">
+                        <strong>Order Date</strong><br>
+                        {{ order.created_at.strftime("%d-%m-%Y %I:%M %p") }}
+                    </div>
 
-            <hr>
+                    <div class="col-md-2">
+                        <strong>Total</strong><br>
+                        <span class="text-success">
+                            ₹{{ order.total_amount }}
+                        </span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <strong>Payment</strong><br>
+
+                        {% if order.payment_status == "Paid" %}
+
+                            <span class="badge bg-success">
+                                {{ order.payment_status }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                {{ order.payment_status }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="col-md-2">
+                        <strong>Status</strong><br>
+
+                        <span class="badge bg-primary">
+                            {{ order.order_status }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
         {% endfor %}
 
     {% else %}
 
-        <h3>No orders found.</h3>
+        <div class="alert alert-info">
+            No orders found.
+        </div>
 
     {% endif %}
 
-</body>
+</div>
 
-</html>
+{% endblock %}

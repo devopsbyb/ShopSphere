@@ -1,4 +1,5 @@
 from flask import redirect, render_template, request, session
+from templates.razorpay_client import client
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import Address, Cart, Product, User, Order, OrderItem, db
@@ -11,6 +12,9 @@ def register_routes(app):
 
     @app.route("/register", methods=["GET", "POST"])
     def register():
+        if "user_id" in session:
+            return redirect("/products")
+
         if request.method == "POST":
             username = request.form["username"]
             email = request.form["email"]
@@ -37,6 +41,9 @@ def register_routes(app):
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
+        if "user_id" in session:
+            return redirect("/products")
+
         if request.method == "POST":
             email = request.form["email"]
             password = request.form["password"]
@@ -51,6 +58,11 @@ def register_routes(app):
             return "Invalid email or password"
 
         return render_template("login.html")
+
+    @app.route("/logout")
+    def logout():
+        session.clear()
+        return redirect("/login")
 
     @app.route("/products")
     def products():
@@ -152,10 +164,20 @@ def register_routes(app):
 
         return redirect("/cart")
 
-
     @app.route("/checkout")
     def checkout():
-        return render_template("checkout.html")
+        if "user_id" not in session:
+            return redirect("/login")
+
+        cart_items = Cart.query.filter_by(user_id=session["user_id"]).all()
+
+        total = sum(item.product.price * item.quantity for item in cart_items)
+
+        return render_template(
+            "checkout.html",
+            cart_items=cart_items,
+            total=total,
+        )
 
     @app.route("/order-success")
     def order_success():
@@ -224,7 +246,7 @@ def register_routes(app):
         db.session.commit()
 
         return redirect("/addresses")
-    
+
     @app.route("/edit-address/<int:address_id>", methods=["GET", "POST"])
     def edit_address(address_id):
         if "user_id" not in session:
@@ -255,7 +277,7 @@ def register_routes(app):
             return redirect("/addresses")
 
         return render_template("edit_address.html", address=address)
-    
+
     @app.route("/select-address/<int:address_id>", methods=["POST"])
     def select_address(address_id):
         if "user_id" not in session:
@@ -291,7 +313,7 @@ def register_routes(app):
             cart_items=cart_items,
             total=total,
         )
-    
+
     @app.route("/place-order", methods=["POST"])
     def place_order():
         if "user_id" not in session:
@@ -330,7 +352,6 @@ def register_routes(app):
         db.session.commit()
 
         return redirect(f"/payment/{order.id}")
-    
 
     @app.route("/payment/<int:order_id>")
     def payment(order_id):
@@ -343,7 +364,7 @@ def register_routes(app):
             return redirect("/products")
 
         return render_template("payment.html", order=order)
-    
+
     @app.route("/payment-success/<int:order_id>", methods=["POST"])
     def payment_success(order_id):
         if "user_id" not in session:
@@ -365,8 +386,8 @@ def register_routes(app):
 
         return render_template(
             "order_success.html",
-             order=order
-        ) 
+            order=order,
+        )
 
     @app.route("/my-orders")
     def my_orders():
@@ -376,3 +397,17 @@ def register_routes(app):
         orders = Order.query.filter_by(user_id=session["user_id"]).order_by(Order.created_at.desc()).all()
 
         return render_template("my_orders.html", orders=orders)
+
+    @app.route("/test-razorpay")
+    def test_razorpay():
+        try:
+            order = client.order.create({
+                "amount": 100,
+                "currency": "INR",
+                "receipt": "test_receipt"
+            })
+
+            return order
+
+        except Exception as e:
+            return str(e)

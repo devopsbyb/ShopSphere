@@ -1,65 +1,103 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Order Review</title>
-</head>
+{% block title %}
+Order Review - ShopSphere
+{% endblock %}
 
-<body>
+{% block content %}
 
-<h1>Order Review</h1>
+<div class="container mt-5">
 
-<h2>Delivery Address</h2>
+    <h2 class="mb-4">Order Review</h2>
 
-<p>
-    {{ address.full_name }}<br>
-    {{ address.phone_number }}<br><br>
+    <div class="card shadow-sm mb-4">
 
-    {{ address.line1 }}<br>
-    {{ address.line2 }}<br>
+        <div class="card-header">
+            <h5 class="mb-0">Delivery Address</h5>
+        </div>
 
-    {% if address.line3 %}
-        {{ address.line3 }}<br>
-    {% endif %}
+        <div class="card-body">
 
-    {{ address.city }},
-    {{ address.state }} -
-    {{ address.pincode }}
-</p>
+            <strong>{{ address.full_name }}</strong><br>
 
-<h2>Products</h2>
+            {{ address.phone_number }}<br><br>
 
-<hr>
+            {{ address.line1 }}<br>
 
-{% for item in cart_items %}
+            {{ address.line2 }}<br>
 
-<p>
-    <strong>{{ item.product.name }}</strong><br>
+            {% if address.line3 %}
+                {{ address.line3 }}<br>
+            {% endif %}
 
-    Price: ₹{{ item.product.price }}<br>
+            {{ address.city }},
+            {{ address.state }} -
+            {{ address.pincode }}
 
-    Quantity: {{ item.quantity }}<br>
+        </div>
 
-    Total:
-    ₹{{ item.product.price * item.quantity }}
-</p>
+    </div>
 
-<h2>Grand Total</h2>
+    <div class="card shadow-sm">
 
-<h3>₹{{ total }}</h3>
+        <div class="card-header">
+            <h5 class="mb-0">Products</h5>
+        </div>
 
-<hr>
+        <div class="card-body">
 
-<hr>
+            {% for item in cart_items %}
 
-<form action="/place-order" method="POST">
-    <button type="submit">
-        Proceed to Payment
-    </button>
-</form>
+            <div class="row align-items-center mb-3">
 
-{% endfor %}
+                <div class="col-md-6">
+                    <strong>{{ item.product.name }}</strong>
+                </div>
 
-</body>
+                <div class="col-md-2">
+                    ₹{{ item.product.price }}
+                </div>
 
-</html>
+                <div class="col-md-2">
+                    Qty: {{ item.quantity }}
+                </div>
+
+                <div class="col-md-2 text-end">
+                    ₹{{ item.product.price * item.quantity }}
+                </div>
+
+            </div>
+
+            <hr>
+
+            {% endfor %}
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+
+                <h4>Grand Total</h4>
+
+                <h4 class="text-success">
+                    ₹{{ total }}
+                </h4>
+
+            </div>
+
+            <div class="text-end mt-4">
+
+                <form action="/place-order" method="POST">
+
+                    <button type="submit" class="btn btn-success">
+                        Proceed to Payment
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

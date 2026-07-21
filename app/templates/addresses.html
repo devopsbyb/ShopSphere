@@ -1,67 +1,93 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Addresses</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h2>My Addresses</h2>
+{% block title %}
+My Addresses - ShopSphere
+{% endblock %}
 
-<a href="/add-address">+ Add New Address</a>
+{% block content %}
 
-<hr>
+<div class="container mt-5">
 
-{% for address in addresses %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-<div style="border:1px solid #ccc; padding:15px; margin-bottom:15px;">
+        <h2>My Addresses</h2>
 
-    <h3>
-        {{ address.full_name }}
+        <a href="/add-address" class="btn btn-success">
+            + Add New Address
+        </a>
 
-        {% if address.is_default %}
-            ⭐ Default
-        {% endif %}
-    </h3>
+    </div>
 
-    <p>{{ address.phone_number }}</p>
+    {% for address in addresses %}
 
-    <p>
-        {{ address.line1 }}<br>
-        {{ address.line2 }}<br>
+    <div class="card shadow-sm mb-4">
 
-        {% if address.line3 %}
-            {{ address.line3 }}<br>
-        {% endif %}
+        <div class="card-body">
 
-        {{ address.city }}, {{ address.state }} - {{ address.pincode }}
-</p>
-        
-<form action="/delete-address/{{ address.id }}" method="POST">
-    <button type="submit">Delete</button>
-</form>    
+            <h4>
+                {{ address.full_name }}
 
-<form action="/select-address/{{ address.id }}" method="POST">
-    <button type="submit">
-        Deliver Here
-    </button>
-</form>
+                {% if address.is_default %}
+                    <span class="badge bg-warning text-dark">
+                        Default
+                    </span>
+                {% endif %}
+            </h4>
 
-<a href="/edit-address/{{ address.id }}">
-    <button type="button">Edit</button>
-</a>
+            <p class="mb-1">{{ address.phone_number }}</p>
 
-<form action="/delete-address/{{ address.id }}" method="POST">
-    <button type="submit">Delete</button>
-</form>
+            <p class="mb-3">
+                {{ address.line1 }}<br>
 
+                {{ address.line2 }}<br>
+
+                {% if address.line3 %}
+                    {{ address.line3 }}<br>
+                {% endif %}
+
+                {{ address.city }},
+                {{ address.state }}
+                - {{ address.pincode }}
+            </p>
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <form action="/select-address/{{ address.id }}" method="POST">
+
+                    <button type="submit" class="btn btn-primary">
+                        Deliver Here
+                    </button>
+
+                </form>
+
+                <a href="/edit-address/{{ address.id }}"
+                   class="btn btn-warning">
+                    Edit
+                </a>
+
+                <form action="/delete-address/{{ address.id }}" method="POST">
+
+                    <button type="submit"
+                            class="btn btn-danger">
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-info">
+        No addresses found.
+    </div>
+
+    {% endfor %}
 
 </div>
 
-{% else %}
-
-<p>No addresses found.</p>
-
-{% endfor %}
-
-</body>
-</html>
+{% endblock %}
