@@ -1,8 +1,9 @@
 from flask import redirect, render_template, request, session
-from templates.razorpay_client import client
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from config import Config
 from models import Address, Cart, Product, User, Order, OrderItem, db
+from templates.razorpay_client import client
 
 
 def register_routes(app):
@@ -363,7 +364,18 @@ def register_routes(app):
         if order.user_id != session["user_id"]:
             return redirect("/products")
 
-        return render_template("payment.html", order=order)
+        razorpay_order = client.order.create({
+            "amount": int(order.total_amount * 100),  # paise
+            "currency": "INR",
+            "receipt": f"order_{order.id}"
+        })
+
+        return render_template(
+            "payment.html",
+            order=order,
+            razorpay_order_id=razorpay_order["id"],
+            razorpay_key=Config.RAZORPAY_KEY_ID
+        )
 
     @app.route("/payment-success/<int:order_id>", methods=["POST"])
     def payment_success(order_id):
