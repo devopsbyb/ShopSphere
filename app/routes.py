@@ -36,7 +36,7 @@ def register_routes(app):
             db.session.add(new_user)
             db.session.commit()
 
-            return "User Registered Successfully!"
+            return redirect("/login")
 
         return render_template("register.html")
 
@@ -72,7 +72,20 @@ def register_routes(app):
 
         products = Product.query.all()
 
-        return render_template("products.html", products=products)
+        cart_items = Cart.query.filter_by(
+            user_id=session["user_id"]
+        ).all()
+
+        cart_dict = {
+            item.product_id: item.quantity
+            for item in cart_items
+        }
+
+        return render_template(
+            "products.html",
+            products=products,
+            cart_dict=cart_dict,
+        )
 
     @app.route("/add-to-cart/<int:product_id>", methods=["POST"])
     def add_to_cart(product_id):
@@ -96,7 +109,7 @@ def register_routes(app):
 
         db.session.commit()
 
-        return redirect("/cart")
+        return redirect("/products")
 
     @app.route("/cart")
     def cart():
@@ -164,6 +177,26 @@ def register_routes(app):
         db.session.commit()
 
         return redirect("/cart")
+    
+    @app.route("/decrease-cart/<int:product_id>", methods=["POST"])
+    def decrease_cart(product_id):
+        if "user_id" not in session:
+            return redirect("/login")
+
+        cart_item = Cart.query.filter_by(
+            user_id=session["user_id"],
+            product_id=product_id
+        ).first()
+
+        if cart_item:
+            if cart_item.quantity > 1:
+                cart_item.quantity -= 1
+            else:
+                db.session.delete(cart_item)
+
+            db.session.commit()
+
+        return redirect("/products")
 
     @app.route("/checkout")
     def checkout():
@@ -423,3 +456,36 @@ def register_routes(app):
 
         except Exception as e:
             return str(e)
+        
+    @app.route("/admin/login", methods=["GET", "POST"])
+    def admin_login():
+
+        if request.method == "POST":
+
+            email = request.form["email"]
+            password = request.form["password"]
+
+            user = User.query.filter_by(email=email).first()
+
+            if (
+                user
+                and check_password_hash(user.password, password)
+                and user.is_admin
+            ):
+
+                session["admin_id"] = user.id
+                session["admin_name"] = user.username
+
+                return redirect("/admin/dashboard")
+
+            return "Invalid Admin Credentials"
+
+        return render_template("admin/login.html")    
+    
+    @app.route("/admin/dashboard")
+    def admin_dashboard():
+
+        if "admin_id" not in session:
+            return redirect("/admin/login")
+
+        return render_template("admin/dashboard.html")

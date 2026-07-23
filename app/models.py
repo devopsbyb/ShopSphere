@@ -16,6 +16,8 @@ class User(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    is_admin = db.Column(db.Boolean, default=False)
+
 
 class Product(db.Model):
 
